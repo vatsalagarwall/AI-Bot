@@ -93,10 +93,12 @@ if st.button("Send"):
         st.session_state.messages.append(("Octaine", bot_reply))
 
 # Custom CSS for alignment
+# Custom CSS for alignment and black text color
 st.markdown("""
     <style>
         .user-msg {
             background-color: #DCF8C6;
+            color: black;
             padding: 10px 15px;
             border-radius: 15px;
             margin: 5px;
@@ -106,6 +108,7 @@ st.markdown("""
         }
         .bot-msg {
             background-color: #F1F0F0;
+            color: black;
             padding: 10px 15px;
             border-radius: 15px;
             margin: 5px;
@@ -119,6 +122,7 @@ st.markdown("""
         }
     </style>
 """, unsafe_allow_html=True)
+
 
 # Display messages
 for sender, message in st.session_state.messages:
