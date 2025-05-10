@@ -51,7 +51,7 @@ if st.button("Send"):
         bot_reply = response.text
         
         # Append bot message
-        st.session_state.messages.append(("Octaine", bot_reply))
+        st.session_state.messages.append(("Octaine Ai", bot_reply))
 
 # Display chat history
 for sender, message in st.session_state.messages:
