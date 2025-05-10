@@ -1,63 +1,3 @@
-# # import streamlit as st
-# # import google.generativeai as genai
-# # from dotenv import load_dotenv
-# # import os
-
-# # load_dotenv()
-# # genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-
-# # model = genai.GenerativeModel('gemini-2.0-flash')
-
-# # st.title("🤖 Octaine Chatbot")
-
-# # user_input = st.text_input("You:", key="input")
-
-# # if st.button("Send"):
-# #     if user_input:
-# #         response = model.generate_content(user_input)
-# #         st.markdown("**Octaine:** " + response.text)
-
-
-# import streamlit as st
-# import google.generativeai as genai
-# from dotenv import load_dotenv
-# import os
-
-# # Load environment variables
-# load_dotenv()
-# genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-
-# # Initialize the Gemini model
-# model = genai.GenerativeModel('gemini-2.0-flash')
-
-# # Streamlit app title
-# st.title("🤖 Octaine Chatbot")
-
-# # Initialize session state for chat history
-# if "messages" not in st.session_state:
-#     st.session_state.messages = []
-
-# # User input
-# user_input = st.text_input("You:", key="input")
-
-# # Handle user input
-# if st.button("Send"):
-#     if user_input:
-#         # Append user message
-#         st.session_state.messages.append(("You", user_input))
-        
-#         # Generate Gemini response
-#         response = model.generate_content(user_input)
-#         bot_reply = response.text
-        
-#         # Append bot message
-#         st.session_state.messages.append(("Octaine Ai", bot_reply))
-
-# # Display chat history
-# for sender, message in st.session_state.messages:
-#     st.markdown(f"**{sender}:** {message}")
-
-
 import streamlit as st
 import google.generativeai as genai
 from dotenv import load_dotenv
@@ -67,66 +7,68 @@ import os
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-# Initialize the Gemini model
+# Initialize model
 model = genai.GenerativeModel('gemini-2.0-flash')
 
-# Streamlit app title
-st.title("🤖 Octaine Chatbot")
+st.set_page_config(page_title="Octaine Chatbot", layout="wide")
 
-# Initialize session state
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-# User input
-user_input = st.text_input("You:", key="input")
-
-if st.button("Send"):
-    if user_input:
-        # Append user message
-        st.session_state.messages.append(("You", user_input))
-        
-        # Generate Gemini response
-        response = model.generate_content(user_input)
-        bot_reply = response.text
-
-        # Append bot response
-        st.session_state.messages.append(("Octaine", bot_reply))
-
-# Custom CSS for alignment
-# Custom CSS for alignment and black text color
 st.markdown("""
     <style>
-        .user-msg {
-            background-color: #DCF8C6;
-            color: black;
-            padding: 10px 15px;
-            border-radius: 15px;
-            margin: 5px;
-            max-width: 70%;
-            text-align: right;
-            align-self: flex-end;
-        }
-        .bot-msg {
-            background-color: #F1F0F0;
-            color: black;
-            padding: 10px 15px;
-            border-radius: 15px;
-            margin: 5px;
-            max-width: 70%;
-            text-align: left;
-            align-self: flex-start;
-        }
-        .msg-container {
+        .chat-container {
             display: flex;
             flex-direction: column;
+            gap: 10px;
+        }
+        .user-msg, .bot-msg {
+            max-width: 60%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            font-size: 16px;
+            color: black;
+        }
+        .user-msg {
+            align-self: flex-end;
+            background-color: #dcf8c6;
+            text-align: right;
+        }
+        .bot-msg {
+            align-self: flex-start;
+            background-color: #f1f0f0;
+            text-align: left;
+        }
+        .input-area {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .stTextInput > div > div > input {
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 16px;
         }
     </style>
 """, unsafe_allow_html=True)
 
+st.title("🤖 Octaine Chatbot")
 
-# Display messages
-for sender, message in st.session_state.messages:
-    if sender == "You":
-        st.markdown(f'<div class="msg-container"><div class="user-msg">{message}</div></div>', unsafe_allow_html=True)
-    else:
-        st.markdown(f'<div class="msg-container"><div class="bot-msg"><b>{sender}:</b> {message}</div></div>', unsafe_allow_html=True)
+# Store chat history
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
+# Input field
+user_input = st.text_input("Ask anything", "", key="input", label_visibility="collapsed")
+
+# Display chat history
+st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+for entry in st.session_state.chat_history:
+    st.markdown(f'<div class="{entry["type"]}-msg">{entry["text"]}</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Handle input
+if user_input:
+    st.session_state.chat_history.append({"type": "user", "text": user_input})
+    response = model.generate_content(user_input)
+    st.session_state.chat_history.append({"type": "bot", "text": response.text})
+    st.experimental_rerun()
