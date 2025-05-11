@@ -24,3 +24,5 @@ while True:
         break
     reply = chat_with_gemini(prompt)
     print("Gemini:", reply, "\n")
+
+ 
