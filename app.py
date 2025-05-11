@@ -156,4 +156,4 @@ if send and user_input:
     response = model.generate_content(user_input)
     bot_reply = response.text
     st.session_state.messages.append(("Octaine", bot_reply))
-    st.experimental_rerun()  # To refresh UI with new messages
+    # sst.experimental_rerun()  # To refresh UI with new messages
